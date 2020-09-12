@@ -12,15 +12,31 @@ async function getQuote() {
   try {
     const response = await fetch(proxyUrl + apiUrl);
     const data = await response.json();
-    console.log(data);
     data.quoteAuthor !== ""
       ? (authorText.innerText = data.quoteAuthor)
       : (authorText.innerText = data.quoteAuthor);
+
+    // Reduce font-size for long quotes
+    data.quoteText.length > 120
+      ? quoteText.classList.add("long-quote")
+      : quoteText.classList.remove("long-quote");
 
     quoteText.innerText = data.quoteText;
   } catch (error) {
     getQuote();
   }
 }
+
+// Twitter functionality for tweeting quote
+function tweetQuote() {
+  const quote = quoteText.innerText;
+  const author = authorText.innerText;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${quote} - ${author}`;
+  window.open(twitterUrl, "_blank");
+}
+
+// EventListeners
+newQuote.addEventListener("click", getQuote);
+twitterBtn.addEventListener("click", tweetQuote);
 
 getQuote();
